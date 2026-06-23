@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <!-- 移动端标准视口配置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kindle WiFi Adapter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#007bff',
+                        danger: '#ff3333',
+                        success: '#28c728',
+                        pageBg: '#f8fbf8',
+                        darkPageBg: '#1a1d1c',
+                        cardBg: '#eef2ef',
+                        darkCardBg: '#2c3130',
+                    },
+                    fontFamily: {
+                        system: ['system-ui', '-apple-system', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .key-wrap {
+                @apply relative aspect-square w-16 sm:w-20 border-2 border-gray-800 rounded-lg bg-white flex items-center justify-center text-2xl sm:text-4xl font-bold transition-all shadow-md hover:shadow-lg dark:bg-gray-700 dark:text-white dark:border-gray-400 shrink-0;
+            }
+            .key-circle {
+                @apply rounded-full;
+            }
+            .key-delete {
+                @apply absolute -top-2 -right-2 w-6 h-6 rounded-full bg-danger text-white flex items-center justify-center text-sm cursor-pointer opacity-0 transition-opacity hover:scale-110;
+            }
+            .key-wrap:hover .key-delete {
+                @apply opacity-100;
+            }
+            .ip-item {
+                @apply flex items-center justify-between gap-2 sm:gap-3 bg-gray-200 dark:bg-gray-700 px-3 sm:px-5 py-2 sm:py-3 rounded-lg text-base sm:text-xl min-w-[240px] sm:min-w-[320px] shadow-sm hover:shadow transition-shadow;
+            }
+            .ip-btn-group {
+                @apply flex items-center gap-2 sm:gap-3 shrink-0;
+            }
+            .btn-base {
+                @apply border-2 border-black px-4 sm:px-6 py-2 sm:py-3 text-xl sm:text-2xl rounded-lg cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white dark:border-gray-400;
+            }
+            /* 按键容器支持自动换行，防止溢出 */
+            .key-row {
+                @apply flex flex-wrap items-center gap-2 sm:gap-4;
+            }
+        }
+    </style>
+</head>
+<body class="bg-pageBg dark:bg-darkPageBg min-h-screen p-4 sm:p-8 font-system transition-colors duration-300">
+    <!-- 顶部标题栏：修复深色文字 -->
+    <div class="flex justify-between items-center mb-6 sm:mb-10 flex-wrap gap-4">
+        <div class="text-2xl sm:text-4xl font-semibold flex items-center gap-2 sm:gap-3 dark:text-white">
+            <i class="fa fa-tablet"></i>
+            Kindle WiFi Adapter
+        </div>
+        <div class="flex items-center gap-3 sm:gap-4">
+            <!-- 日夜切换 -->
+            <button id="themeToggle" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-lg sm:text-xl shadow hover:shadow-md transition shrink-0">
+                <i class="fa fa-moon-o dark:hidden"></i>
+                <i class="fa fa-sun-o hidden dark:block text-yellow-400"></i>
+            </button>
+            <select class="border border-gray-400 dark:border-gray-600 px-2 sm:px-3 py-1 sm:py-2 rounded-md text-sm sm:text-base bg-white dark:bg-gray-700 dark:text-white shrink-0">
+                <option selected>简体中文</option>
+                <option>English</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- API IP 设置 -->
+    <h2 class="text-center text-3xl sm:text-5xl font-bold my-6 sm:my-8 dark:text-white">API接口设置(Kindle IP)</h2>
+    <div class="flex flex-wrap gap-3 sm:gap-4 items-center mb-10 sm:mb-16">
+        <!-- IP条目1 默认实心星标 -->
+        <div class="ip-item">
+            <span class="dark:text-white truncate">192.168.31.123</span>
+            <div class="ip-btn-group">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-primary text-primary flex items-center justify-center cursor-pointer shrink-0 text-sm">i</div>
+                <i class="fa fa-star text-primary text-base sm:text-xl shrink-0 cursor-pointer"></i>
+                <button class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center shrink-0">−</button>
+            </div>
+        </div>
+        <!-- IP条目2 空心星标 -->
+        <div class="ip-item">
+            <span class="dark:text-white truncate">192.168.31.169</span>
+            <div class="ip-btn-group">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-primary text-primary flex items-center justify-center cursor-pointer shrink-0 text-sm">i</div>
+                <i class="fa fa-star-o text-gray-500 dark:text-gray-400 text-base sm:text-xl shrink-0 cursor-pointer"></i>
+                <button class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center shrink-0">−</button>
+            </div>
+        </div>
+        <!-- IP条目3 空心星标 -->
+        <div class="ip-item">
+            <span class="dark:text-white truncate">192.168.0.110</span>
+            <div class="ip-btn-group">
+                <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-primary text-primary flex items-center justify-center cursor-pointer shrink-0 text-sm">i</div>
+                <i class="fa fa-star-o text-gray-500 dark:text-gray-400 text-base sm:text-xl shrink-0 cursor-pointer"></i>
+                <button class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center shrink-0">−</button>
+            </div>
+        </div>
+        <button id="openModalBtn" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-success text-white text-xl sm:text-2xl border-none cursor-pointer flex items-center justify-center shadow hover:shadow-lg transition shrink-0">+</button>
+    </div>
+
+    <!-- 键位映射 -->
+    <h2 class="text-center text-3xl sm:text-5xl font-bold my-6 sm:my-8 dark:text-white">键位映射设置</h2>
+    <!-- 下一页 -->
+    <div class="bg-cardBg dark:bg-darkCardBg rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-md">
+        <div class="key-row">
+            <div class="text-2xl sm:text-4xl font-bold min-w-[100px] sm:min-w-[140px] dark:text-white shrink-0">下一页</div>
+            <div class="key-wrap">
+                >
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <div class="key-wrap">
+                P
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <div class="key-wrap">
+                6
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <div class="key-wrap key-circle">
+                A
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <button class="text-3xl sm:text-4xl bg-transparent border-none cursor-pointer px-1 sm:px-2 add-key-btn shrink-0">+</button>
+        </div>
+    </div>
+    <!-- 上一页 -->
+    <div class="bg-cardBg dark:bg-darkCardBg rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-md">
+        <div class="key-row">
+            <div class="text-2xl sm:text-4xl font-bold min-w-[100px] sm:min-w-[140px] dark:text-white shrink-0">上一页</div>
+            <div class="key-wrap">
+                <
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <div class="key-wrap">
+                Q
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <div class="key-wrap">
+                4
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <div class="key-wrap key-circle">
+                B
+                <span class="key-delete"><i class="fa fa-times"></i></span>
+            </div>
+            <button class="text-3xl sm:text-4xl bg-transparent border-none cursor-pointer px-1 sm:px-2 add-key-btn shrink-0">+</button>
+        </div>
+    </div>
+
+    <!-- 底部推送按钮 -->
+    <div class="text-center mt-8 sm:mt-12">
+        <button id="pushKeyBtn" class="btn-base">推送键位映射到Kindle</button>
+    </div>
+
+    <!-- 弹窗 -->
+    <div id="ipModal" class="fixed inset-0 bg-black/30 hidden grid place-items-center z-50 p-4">
+        <div class="bg-pageBg dark:bg-darkPageBg w-full max-w-[900px] rounded-xl shadow-2xl text-center transition-colors p-6 sm:p-10">
+            <h3 class="text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 dark:text-white">扫描Kindle IP (插件开启时)</h3>
+            <button class="btn-base mb-6 sm:mb-8 modal-scan">开始</button>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
+                <input id="ipInput" placeholder="请输入kindle IP" class="w-full sm:w-[70%] text-lg sm:text-2xl py-2 sm:py-3 px-4 sm:px-5 text-center border-2 border-gray-400 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 dark:text-white">
+                <button class="btn-base modal-confirm w-full sm:w-auto">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 日夜切换
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlRoot = document.documentElement;
+        themeToggle.addEventListener('click', () => {
+            htmlRoot.classList.toggle('dark');
+        })
+
+        // IP弹窗
+        const openModalBtn = document.getElementById('openModalBtn');
+        const ipModal = document.getElementById('ipModal');
+        openModalBtn.addEventListener('click', () => ipModal.classList.remove('hidden'));
+        ipModal.addEventListener('click', (e) => {
+            if (e.target === ipModal) ipModal.classList.add('hidden');
+        })
+
+        // 删除按键
+        document.querySelectorAll('.key-delete').forEach(delBtn => {
+            delBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                this.parentElement.remove();
+            })
+        })
+
+        // 新增按键
+        document.querySelectorAll('.add-key-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const keyBlock = this.closest('.key-row');
+                const inputKey = prompt('输入要绑定的单个按键字符：');
+                if (!inputKey || inputKey.trim() === '') return;
+                const newKey = document.createElement('div');
+                newKey.className = 'key-wrap';
+                newKey.innerHTML = `${inputKey.trim()}<span class="key-delete"><i class="fa fa-times"></i></span>`;
+                newKey.querySelector('.key-delete').addEventListener('click', e => {
+                    e.stopPropagation();
+                    newKey.remove();
+                })
+                keyBlock.insertBefore(newKey, this);
+            })
+        })
+
+        // 推送按钮
+        document.getElementById('pushKeyBtn').addEventListener('click', () => {
+            alert('已将当前所有绑定按键推送至选中的Kindle设备');
+        })
+
+        // 删除IP条目
+        document.querySelectorAll('.ip-item button').forEach(delIpBtn => {
+            delIpBtn.addEventListener('click', function () {
+                const ipBox = this.closest('.ip-item');
+                if (confirm('确定要删除该Kindle IP吗？')) ipBox.remove();
+            })
+        })
+    </script>
+</body>
+</html>
