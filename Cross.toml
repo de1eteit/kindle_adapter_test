@@ -2,7 +2,7 @@
 pre-build = ["apt-get update && apt-get install -y libssl-dev pkg-config xorg-dev libevdev-dev libudev-dev"]
 
 [target.aarch64-unknown-linux-gnu]
-pre-build = ["dpkg --add-architecture arm64 && apt-get update && apt-get install -y libssl-dev:arm64 pkg-config:arm64 xorg-dev:arm64 libevdev-dev:arm64 libudev-dev:arm64"]
+pre-build = ["dpkg --add-architecture arm64 && apt-get update && apt-get install -y libssl-dev:arm64 libx11-dev:arm64 libxi-dev:arm64 libevdev-dev:arm64 libudev-dev:arm64"]
 
 [target.armv7-unknown-linux-gnueabihf]
-pre-build = ["dpkg --add-architecture armhf && apt-get update && apt-get install -y libssl-dev:armhf pkg-config:armhf libx11-dev:armhf libxext-dev:armhf libxi-dev:armhf libevdev-dev:armhf libudev-dev:armhf"]
+pre-build = ["dpkg --add-architecture armhf && apt-get update && apt-get install -y libssl-dev:armhf libx11-dev:armhf libxext-dev:armhf libxi-dev:armhf libevdev-dev:armhf libudev-dev:armhf"]
