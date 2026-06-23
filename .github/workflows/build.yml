@@ -77,6 +77,7 @@ jobs:
           TARGET=${{ matrix.target }}
           PKG_NAME=kindle_adapter_${TARGET}
           OUT_DIR=./kindle_adapter_$TARGET
+          echo ${PKG_NAME} >> $GITHUB_ENV
           if [[ "$TARGET" == *windows* ]]; then
             zip -r ${PKG_NAME}.zip $OUT_DIR
             echo "ARTIFACT_FILE=${PKG_NAME}.zip" >> $GITHUB_ENV
@@ -89,7 +90,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_FILE }}
-          path: ${{ env.PKG_NAME }}
+          path: ${{ env.ARTIFACT_FILE }}
 
   mac-build:
     runs-on: macos-latest
@@ -130,7 +131,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT }}
-          path: ${{ env.PKG_NAME }}
+          path: ${{ env.ARTIFACT }}
 
   release:
     needs: [cross-build, mac-build]
