@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_FILE }}
-          path: ${{ env.ARTIFACT_FILE }}
+          path: ${{ env.PKG_NAME }}
 
   mac-build:
     runs-on: macos-latest
@@ -123,14 +123,14 @@ jobs:
       - name: Archive tar.gz
         run: |
           PKG_NAME=kindle_adapter_${{ matrix.target }}
-          tar -zcvf ${PKG_NAME}.tar.gz package_${{ matrix.target }}
+          tar -zcvf ${PKG_NAME}.tar.gz ${PKG_NAME}
           echo "ARTIFACT=${PKG_NAME}.tar.gz" >> $GITHUB_ENV
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT }}
-          path: ${{ env.ARTIFACT }}
+          path: ${{ env.PKG_NAME }}
 
   release:
     needs: [cross-build, mac-build]
