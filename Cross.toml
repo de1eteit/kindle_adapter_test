@@ -1,0 +1,8 @@
+[target.x86_64-unknown-linux-gnu]
+pre-build = ["apt-get update && apt-get install -y libssl-dev pkg-config xorg-dev libevdev-dev libudev-dev"]
+
+[target.aarch64-unknown-linux-gnu]
+pre-build = ["apt-get update && apt-get install -y libssl-dev pkg-config xorg-dev libevdev-dev libudev-dev"]
+
+[target.armv7-unknown-linux-gnueabihf]
+pre-build = ["apt-get update && apt-get install -y libssl-dev pkg-config xorg-dev libevdev-dev libudev-dev"]

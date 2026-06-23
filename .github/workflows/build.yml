@@ -37,10 +37,13 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y xorg-dev libevdev-dev libudev-dev
+
       - name: Setup Rust & Cross
         uses: dtolnay/rust-toolchain@stable
+
       - name: Install cross
         run: cargo install cross --force
+        
       - name: Cache cross docker images
         uses: actions/cache@v4
         with:
@@ -77,7 +80,6 @@ jobs:
           TARGET=${{ matrix.target }}
           PKG_NAME=kindle_adapter_${TARGET}
           OUT_DIR=./kindle_adapter_$TARGET
-          echo "${PKG_NAME}"" >> $GITHUB_ENV
           if [[ "$TARGET" == *windows* ]]; then
             zip -r ${PKG_NAME}.zip $OUT_DIR
             echo "ARTIFACT_FILE=${PKG_NAME}.zip" >> $GITHUB_ENV
@@ -90,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_FILE }}
-          path: ${{ env.PKG_NAME }}
+          path: ${{ env.ARTIFACT_FILE }}
 
   mac-build:
     runs-on: macos-latest
