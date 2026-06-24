@@ -114,7 +114,7 @@ jobs:
           mkdir -p "$OUTPUT_DIR"
           BIN_OUT="${{ env.CARGO_TARGET_DIR }}/${{ matrix.target }}/release"
           cp "$BIN_OUT/${{ env.BIN1_NAME }}${{ matrix.ext }}" "$OUTPUT_DIR/"
-          cp "$BIN_OUT/${{ env.BIN2_NAME }}${{ matrix.ext }}" "$OUTPUT_DIR/'
+          cp "$BIN_OUT/${{ env.BIN2_NAME }}${{ matrix.ext }}" "$OUTPUT_DIR/"
           cp -r "${{ env.WEB_DIR }}" "$OUTPUT_DIR/"
 
       - name: Archive release package
