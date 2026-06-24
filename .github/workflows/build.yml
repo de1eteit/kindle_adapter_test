@@ -112,15 +112,8 @@ jobs:
           OUTPUT_DIR=./kindle_adapter_${{ matrix.target }}
           mkdir -p $OUTPUT_DIR
           BIN_OUT=${{ env.CARGO_TARGET_DIR }}/${{ matrix.target }}/release
-
-          if [[ "${{ matrix.target }}" == *windows* ]]; then
-            cp $BIN_OUT/${{ env.BIN1_NAME }}.exe $OUTPUT_DIR/
-            cp $BIN_OUT/${{ env.BIN2_NAME }}.exe $OUTPUT_DIR/
-          else
-            cp $BIN_OUT/${{ env.BIN1_NAME }} $OUTPUT_DIR/
-            cp $BIN_OUT/${{ env.BIN2_NAME }} $OUTPUT_DIR/
-          fi
-
+          cp $BIN_OUT/${{ env.BIN1_NAME }}${{ matrix.ext }} $OUTPUT_DIR/
+          cp $BIN_OUT/${{ env.BIN2_NAME }}${{ matrix.ext }} $OUTPUT_DIR/
           cp -r ${{ env.WEB_DIR }} $OUTPUT_DIR/
 
       - name: Archive release package
