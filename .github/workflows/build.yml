@@ -99,8 +99,12 @@ jobs:
             cross build --release --target ${{ matrix.target }}
           fi
 
-      - name: Cargo build Windows
-        if: !startsWith(matrix.os, 'ubuntu')
+      - name: Cargo build Windows MSVC
+        if: startsWith(matrix.os, 'windows')
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Cargo build macOS
+        if: startsWith(matrix.os, 'macos')
         run: cargo build --release --target ${{ matrix.target }}
 
       - name: Prepare package files
