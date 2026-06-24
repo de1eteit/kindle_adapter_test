@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  CARGO_TARGET_DIR: target
-  WEB_DIR: web
+  CARGO_TARGET_DIR: ./target
+  WEB_DIR: ./web
   BIN1_NAME: kindle_adapter
   BIN2_NAME: kindle_adapter_webui
 
@@ -89,44 +89,46 @@ jobs:
           path: ~/.cross
           key: cross-docker-${{ matrix.target }}
 
-      #- name: Build with cross
-        #if: startsWith(matrix.os, 'ubuntu')
-        #run: |
-          #cargo install cross --force
-          #if [[ "${{ matrix.target }}" == *linux* ]]; then
-            #cross build --release --target ${{ matrix.target }} --features linux
-          #else
-            #cross build --release --target ${{ matrix.target }}
-          #fi
+      - name: Build with cross
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          cargo install cross --force
+          if [[ "${{ matrix.target }}" == *linux* ]]; then
+            cross build --release --target ${{ matrix.target }} --features linux
+          else
+            cross build --release --target ${{ matrix.target }}
+          fi
 
       - name: Cargo build Windows MSVC
         if: startsWith(matrix.os, 'windows')
         run: cargo build --release --target ${{ matrix.target }}
 
-      #- name: Cargo build macOS
-        #if: startsWith(matrix.os, 'macos')
-        #run: cargo build --release --target ${{ matrix.target }}
+      - name: Cargo build macOS
+        if: startsWith(matrix.os, 'macos')
+        run: cargo build --release --target ${{ matrix.target }}
 
       - name: Prepare package files
+        shell: bash
         run: |
-          OUTPUT_DIR=kindle_adapter_${{ matrix.target }}
-          mkdir -p $OUTPUT_DIR
-          BIN_OUT=${{ env.CARGO_TARGET_DIR }}/${{ matrix.target }}/release
-          cp $BIN_OUT/${{ env.BIN1_NAME }}${{ matrix.ext }} $OUTPUT_DIR/
-          cp $BIN_OUT/${{ env.BIN2_NAME }}${{ matrix.ext }} $OUTPUT_DIR/
-          cp -r ${{ env.WEB_DIR }} $OUTPUT_DIR/
+          OUTPUT_DIR="./kindle_adapter_${{ matrix.target }}"
+          mkdir -p "$OUTPUT_DIR"
+          BIN_OUT="${{ env.CARGO_TARGET_DIR }}/${{ matrix.target }}/release"
+          cp "$BIN_OUT/${{ env.BIN1_NAME }}${{ matrix.ext }}" "$OUTPUT_DIR/"
+          cp "$BIN_OUT/${{ env.BIN2_NAME }}${{ matrix.ext }}" "$OUTPUT_DIR/'
+          cp -r "${{ env.WEB_DIR }}" "$OUTPUT_DIR/"
 
       - name: Archive release package
         id: archive
+        shell: bash
         run: |
-          TARGET=${{ matrix.target }}
-          PKG_NAME=kindle_adapter_${TARGET}
-          OUT_DIR=./kindle_adapter_$TARGET
+          TARGET="${{ matrix.target }}"
+          PKG_NAME="kindle_adapter_${TARGET}"
+          OUT_DIR="./kindle_adapter_$TARGET"
           if [[ "$TARGET" == *windows* ]]; then
-            zip -r ${PKG_NAME}.zip $OUT_DIR
+            zip -r "${PKG_NAME}.zip" "$OUT_DIR"
             echo "ARTIFACT_FILE=${PKG_NAME}.zip" >> $GITHUB_ENV
           else
-            tar -zcvf ${PKG_NAME}.tar.gz $OUT_DIR
+            tar -zcvf "${PKG_NAME}.tar.gz" "$OUT_DIR"
             echo "ARTIFACT_FILE=${PKG_NAME}.tar.gz" >> $GITHUB_ENV
           fi
 
