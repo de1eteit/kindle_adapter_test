@@ -5,12 +5,12 @@ pre-build = ["apt-get update && apt-get install -y libssl-dev pkg-config xorg-de
 pre-build = [
   "dpkg --add-architecture arm64 && apt update -y",
   "apt install -y git python3 python3-dev make autoconf automake libtool",
-  "apt install -y libssl-dev:arm64 libx11-dev:arm64 libxext-dev:arm64 libxi-dev:arm64 libevdev-dev:arm64 libudev-dev:arm64",
+  "apt install -y libssl-dev:arm64 libx11-dev:arm64 libxtst-dev:arm64 libxext-dev:arm64 libxi-dev:arm64 libevdev-dev:arm64 libudev-dev:arm64",
 ]
 
 [target.armv7-unknown-linux-gnueabihf]
 pre-build = [
   "dpkg --add-architecture armhf && apt update -y",
   "apt install -y git python3 python3-dev pkg-config make autoconf automake libtool",
-  "apt install -y libssl-dev:armhf libx11-dev:armhf libxext-dev:armhf libxi-dev:armhf libevdev-dev:armhf libudev-dev:armhf",
+  "apt install -y libssl-dev:armhf libx11-dev:armhf libxtst-dev:armhf libxext-dev:armhf libxi-dev:armhf libevdev-dev:armhf libudev-dev:armhf",
 ]
