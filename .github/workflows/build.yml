@@ -125,6 +125,7 @@ jobs:
           PKG_NAME="kindle_adapter_${TARGET}"
           OUT_DIR="./kindle_adapter_$TARGET"
           if [[ "$TARGET" == *windows* ]]; then
+            choco install zip -y
             zip -r "${PKG_NAME}.zip" "$OUT_DIR"
             echo "ARTIFACT_FILE=${PKG_NAME}.zip" >> $GITHUB_ENV
           else
