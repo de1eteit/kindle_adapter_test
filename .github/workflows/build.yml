@@ -82,10 +82,8 @@ jobs:
 
       - name: Build with cross
         if: startsWith(matrix.os, 'ubuntu')
-        uses: taiki-e/install-action@cross
-        with:
-          tool: cross
         run: |
+          cargo install cross --force
           if [[ "${{ matrix.target }}" == *linux* ]]; then
             cross build --release --target ${{ matrix.target }} --features linux
           else
