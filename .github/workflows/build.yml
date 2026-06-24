@@ -33,6 +33,16 @@ jobs:
             feature: windows
             ext: .exe
             archive: zip
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            feature: macos
+            ext: ""
+            archive: tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            feature: macos
+            ext: ""
+            archive: tar.gz
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             feature: linux
@@ -68,12 +78,11 @@ jobs:
       - name: Cache Rust build
         uses: Swatinem/rust-cache@v2
 
-      - name: Setup Rust & Cross
+      - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
 
-      # - name: Install cross
-      #   run: cargo install cross --force
-        
       - name: Cache cross docker images
         uses: actions/cache@v4
         with:
@@ -91,8 +100,8 @@ jobs:
           fi
 
       - name: Cargo build Windows
-        if: startsWith(matrix.os, 'windows')
-        run: cargo build --release --target ${{ matrix.target }} --features=${{ matrix.feature }}
+        if: !startsWith(matrix.os, 'ubuntu')
+        run: cargo build --release --target ${{ matrix.target }}
 
       - name: Prepare package files
         run: |
@@ -129,47 +138,6 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_FILE }}
           path: ${{ env.ARTIFACT_FILE }}
-
-  mac-build:
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          - x86_64-apple-darwin
-          - aarch64-apple-darwin
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Rust + install mac target
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
-
-      - name: Build release
-        run: |
-          cargo build --release --target ${{ matrix.target }}
-
-      - name: Prepare package
-        run: |
-          OUTPUT_DIR=./kindle_adapter_${{ matrix.target }}
-          mkdir -p $OUTPUT_DIR
-          BIN_OUT=${{ env.CARGO_TARGET_DIR }}/${{ matrix.target }}/release
-          cp $BIN_OUT/${{ env.BIN1_NAME }} $OUTPUT_DIR/
-          cp $BIN_OUT/${{ env.BIN2_NAME }} $OUTPUT_DIR/
-          cp -r ${{ env.WEB_DIR }} $OUTPUT_DIR/
-
-      - name: Archive tar.gz
-        run: |
-          PKG_NAME=kindle_adapter_${{ matrix.target }}
-          tar -zcvf ${PKG_NAME}.tar.gz ${PKG_NAME}
-          echo "ARTIFACT=${PKG_NAME}.tar.gz" >> $GITHUB_ENV
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT }}
-          path: ${{ env.ARTIFACT }}
 
   release:
     needs: [cross-build]
